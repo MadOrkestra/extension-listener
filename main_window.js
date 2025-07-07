@@ -88,4 +88,5 @@ document.addEventListener('DOMContentLoaded', function () {
     // Add event listeners
     document.getElementById('approve-btn').addEventListener('click', handleApproval);
     document.getElementById('deny-btn').addEventListener('click', handleDenial);
+    document.getElementById('close-btn').addEventListener('click', () => window.close());
 });

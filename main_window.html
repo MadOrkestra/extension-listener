@@ -7,17 +7,23 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
+            margin: 0;
+            padding: 15px;
             background-color: #f5f5f5;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
 
         .container {
             background: white;
-            padding: 30px;
+            padding: 25px;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: calc(100vh - 30px);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            position: relative;
         }
 
         .cardano-icon {
@@ -84,11 +90,29 @@
             background: #e9ecef;
             border-radius: 3px;
         }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+            padding: 5px;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
+        <button class="close-btn"
+                id="close-btn">×</button>
         <div class="cardano-icon">₳</div>
         <h1>Cardano Protocol Handler</h1>
 

@@ -15,9 +15,13 @@ chrome.webNavigation.onCompleted.addListener((details) => {
 chrome.runtime.onInstalled.addListener(async () => {
     console.log('Extension installed, setting up protocol handler');
 
-    // Create a tab to ask user to register the protocol handler
-    const tab = await chrome.tabs.create({
-        url: chrome.runtime.getURL('protocol_setup.html')
+    // Create a popup window to ask user to register the protocol handler
+    const window = await chrome.windows.create({
+        url: chrome.runtime.getURL('protocol_setup.html'),
+        type: 'popup',
+        width: 700,
+        height: 650,
+        focused: true
     });
 });
 
@@ -26,9 +30,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'handleCardanoUrl') {
         console.log('Received Cardano URL from content script:', request.url);
 
-        // Open the main window with the Cardano URL
-        chrome.tabs.create({
-            url: chrome.runtime.getURL(`main_window.html#/send-from-uri?q=${encodeURIComponent(request.url)}`)
+        // Open the main window in a popup window
+        chrome.windows.create({
+            url: chrome.runtime.getURL(`main_window.html#/send-from-uri?q=${encodeURIComponent(request.url)}`),
+            type: 'popup',
+            width: 650,
+            height: 600,
+            focused: true
         });
 
         sendResponse({ success: true });

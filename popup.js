@@ -34,16 +34,24 @@ async function checkStatus() {
 }
 
 function openSetup() {
-    chrome.tabs.create({
-        url: chrome.runtime.getURL('protocol_setup.html')
+    chrome.windows.create({
+        url: chrome.runtime.getURL('protocol_setup.html'),
+        type: 'popup',
+        width: 700,
+        height: 650,
+        focused: true
     });
     window.close();
 }
 
 function testCardanoUrl() {
-    // Create a test tab with a web+cardano URL
-    chrome.tabs.create({
-        url: chrome.runtime.getURL('main_window.html#/send-from-uri?q=web%2Bcardano%3A%2F%2Fsend%3Famount%3D10%26address%3Daddr1test%26asset%3DADA')
+    // Create a test popup window with a web+cardano URL
+    chrome.windows.create({
+        url: chrome.runtime.getURL('main_window.html#/send-from-uri?q=web%2Bcardano%3A%2F%2Fsend%3Famount%3D10%26address%3Daddr1test%26asset%3DADA'),
+        type: 'popup',
+        width: 650,
+        height: 600,
+        focused: true
     });
     window.close();
 }
