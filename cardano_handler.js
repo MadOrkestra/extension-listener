@@ -1,8 +1,23 @@
 // Universal content script for handling web+cardano links
 // This script will be injected into web pages to intercept web+cardano URLs
 
+// Check if extension context is still valid
+function isExtensionContextValid() {
+    try {
+        return !!(chrome && chrome.runtime && chrome.runtime.id);
+    } catch (error) {
+        return false;
+    }
+}
+
 // Function to handle web+cardano links
 function interceptCardanoLinks() {
+    // Only proceed if extension context is valid
+    if (!isExtensionContextValid()) {
+        console.log('Extension context invalidated, skipping Cardano link interception');
+        return;
+    }
+
     // Find all web+cardano links on the page
     const cardanoLinks = document.querySelectorAll('a[href^="web+cardano:"]');
 
@@ -21,11 +36,32 @@ function handleCardanoClick(event) {
 
     console.log('Intercepted web+cardano link:', cardanoUrl);
 
-    // Send message to background script
-    chrome.runtime.sendMessage({
-        action: 'handleCardanoUrl',
-        url: cardanoUrl
-    });
+    // Send message to background script with error handling
+    try {
+        chrome.runtime.sendMessage({
+            action: 'handleCardanoUrl',
+            url: cardanoUrl
+        }, (response) => {
+            if (chrome.runtime.lastError) {
+                console.error('Extension context invalidated or message failed:', chrome.runtime.lastError.message);
+                // Fallback: try to handle the URL directly
+                handleCardanoUrlFallback(cardanoUrl);
+            } else {
+                console.log('Cardano URL handled successfully:', response);
+            }
+        });
+    } catch (error) {
+        console.error('Failed to send message to extension:', error);
+        // Fallback: try to handle the URL directly
+        handleCardanoUrlFallback(cardanoUrl);
+    }
+}
+
+// Fallback function when extension context is invalidated
+function handleCardanoUrlFallback(cardanoUrl) {
+    console.log('Using fallback handler for:', cardanoUrl);
+    // Show a simple alert as fallback
+    alert(`Cardano URL detected: ${cardanoUrl}\n\nPlease reload the page and try again, or check if the extension is working properly.`);
 }
 
 // Function to create a web+cardano link for testing
@@ -53,12 +89,23 @@ function createTestCardanoLink() {
 // Initialize when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
+        if (!isExtensionContextValid()) {
+            console.log('Extension context invalidated during initialization');
+            return;
+        }
+
         interceptCardanoLinks();
         createTestCardanoLink();
 
         // Watch for dynamically added links
         const observer = new MutationObserver(function () {
-            interceptCardanoLinks();
+            if (isExtensionContextValid()) {
+                interceptCardanoLinks();
+            } else {
+                // Stop observing if extension context is invalidated
+                observer.disconnect();
+                console.log('Extension context invalidated, stopping mutation observer');
+            }
         });
 
         observer.observe(document.body, {
@@ -68,16 +115,26 @@ if (document.readyState === 'loading') {
     });
 } else {
     // DOM is already ready
-    interceptCardanoLinks();
-    createTestCardanoLink();
-
-    // Watch for dynamically added links
-    const observer = new MutationObserver(function () {
+    if (isExtensionContextValid()) {
         interceptCardanoLinks();
-    });
+        createTestCardanoLink();
 
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
+        // Watch for dynamically added links
+        const observer = new MutationObserver(function () {
+            if (isExtensionContextValid()) {
+                interceptCardanoLinks();
+            } else {
+                // Stop observing if extension context is invalidated
+                observer.disconnect();
+                console.log('Extension context invalidated, stopping mutation observer');
+            }
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    } else {
+        console.log('Extension context invalidated, skipping initialization');
+    }
 }

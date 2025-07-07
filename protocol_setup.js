@@ -41,10 +41,16 @@ function registerProtocolHandler() {
 
         showStatus('✅ Protocol handler registered successfully! You can now handle web+cardano URLs.', 'success');
 
-        // Store the registration status
-        chrome.storage.local.set({
-            protocolHandlerRegistered: true,
+        // Send message to background script to store the registration status
+        chrome.runtime.sendMessage({
+            action: 'protocolRegistered',
             registrationDate: new Date().toISOString()
+        }, (response) => {
+            if (chrome.runtime.lastError) {
+                console.error('Error sending message:', chrome.runtime.lastError);
+            } else {
+                console.log('Protocol registration stored:', response);
+            }
         });
 
         // Close the tab after a delay
@@ -59,10 +65,16 @@ function registerProtocolHandler() {
 }
 
 function skipSetup() {
-    // Store that user skipped setup
-    chrome.storage.local.set({
-        protocolHandlerSkipped: true,
+    // Send message to background script to store that user skipped setup
+    chrome.runtime.sendMessage({
+        action: 'protocolSkipped',
         skipDate: new Date().toISOString()
+    }, (response) => {
+        if (chrome.runtime.lastError) {
+            console.error('Error sending message:', chrome.runtime.lastError);
+        } else {
+            console.log('Protocol skip stored:', response);
+        }
     });
 
     showStatus('Setup skipped. You can register the protocol handler later from the extension popup.', 'success');

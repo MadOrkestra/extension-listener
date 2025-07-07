@@ -32,6 +32,12 @@ alert(message);
 
 // Add event listener for web+cardano protocol handling
 document.addEventListener('DOMContentLoaded', function () {
+    // Check if extension context is still valid
+    if (!chrome || !chrome.runtime || !chrome.runtime.id) {
+        console.log('Extension context invalidated in content.js');
+        return;
+    }
+
     // Look for web+cardano links on the page
     const cardanoLinks = document.querySelectorAll('a[href^="web+cardano:"]');
 
@@ -40,11 +46,21 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             const cardanoUrl = this.href;
 
-            // Send message to background script
-            chrome.runtime.sendMessage({
-                action: 'handleCardanoUrl',
-                url: cardanoUrl
-            });
+            // Send message to background script with error handling
+            try {
+                chrome.runtime.sendMessage({
+                    action: 'handleCardanoUrl',
+                    url: cardanoUrl
+                }, (response) => {
+                    if (chrome.runtime.lastError) {
+                        console.error('Extension context invalidated:', chrome.runtime.lastError.message);
+                        alert(`Extension context invalidated. Please reload the page.\n\nCardano URL: ${cardanoUrl}`);
+                    }
+                });
+            } catch (error) {
+                console.error('Failed to send message:', error);
+                alert(`Extension error. Please reload the page.\n\nCardano URL: ${cardanoUrl}`);
+            }
         });
     });
 });

@@ -15,14 +15,19 @@ chrome.webNavigation.onCompleted.addListener((details) => {
 chrome.runtime.onInstalled.addListener(async () => {
     console.log('Extension installed, setting up protocol handler');
 
-    // Create a popup window to ask user to register the protocol handler
-    const window = await chrome.windows.create({
-        url: chrome.runtime.getURL('protocol_setup.html'),
-        type: 'popup',
-        width: 700,
-        height: 650,
-        focused: true
-    });
+    // Check if user has already seen the setup
+    const result = await chrome.storage.local.get(['protocolHandlerRegistered', 'protocolHandlerSkipped']);
+
+    if (!result.protocolHandlerRegistered && !result.protocolHandlerSkipped) {
+        // Create a popup window to ask user to register the protocol handler
+        const window = await chrome.windows.create({
+            url: chrome.runtime.getURL('protocol_setup.html'),
+            type: 'popup',
+            width: 700,
+            height: 650,
+            focused: true
+        });
+    }
 });
 
 // Listen for messages from content scripts and main window
@@ -46,6 +51,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse({ success: true });
     } else if (request.action === 'cardanoDenied') {
         console.log('User denied Cardano request:', request.url);
+        sendResponse({ success: true });
+    } else if (request.action === 'protocolRegistered') {
+        console.log('Protocol handler registered');
+        chrome.storage.local.set({
+            protocolHandlerRegistered: true,
+            registrationDate: request.registrationDate
+        });
+        sendResponse({ success: true });
+    } else if (request.action === 'protocolSkipped') {
+        console.log('Protocol handler setup skipped');
+        chrome.storage.local.set({
+            protocolHandlerSkipped: true,
+            skipDate: request.skipDate
+        });
         sendResponse({ success: true });
     }
 });

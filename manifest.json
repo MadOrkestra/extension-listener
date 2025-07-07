@@ -22,7 +22,7 @@
   "content_scripts": [
     {
       "matches": ["https://*/*", "http://*/*"],
-      "js": ["cardano_handler.js"],
+      "js": ["context_monitor.js", "cardano_handler.js"],
       "run_at": "document_start"
     }
   ],
