@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Trigger Example",
+  "version": "1.0",
+  "description": "Triggers when a specific URL is visited",
+  "permissions": ["webNavigation", "scripting"],
+  "host_permissions": ["http://localhost:5173/*"],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
