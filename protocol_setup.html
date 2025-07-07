@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Setup Cardano Protocol Handler</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .cardano-icon {
+            font-size: 64px;
+            color: #0033AD;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .permission-box {
+            background: #f8f9fa;
+            border: 2px solid #0033AD;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .permission-title {
+            font-weight: bold;
+            color: #0033AD;
+            margin-bottom: 10px;
+        }
+
+        .buttons {
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 15px 30px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .register {
+            background-color: #0033AD;
+            color: white;
+        }
+
+        .register:hover {
+            background-color: #002080;
+        }
+
+        .skip {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .skip:hover {
+            background-color: #5a6268;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .status.success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .status.error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .example-url {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="cardano-icon">₳</div>
+        <h1>Setup Cardano Protocol Handler</h1>
+
+        <div class="description">
+            <p>This extension can handle <strong>web+cardano:</strong> URLs to make Cardano transactions easier and more
+                secure.</p>
+
+            <div class="permission-box">
+                <div class="permission-title">🔐 Permission Required</div>
+                <p>To handle web+cardano URLs, this extension needs to be registered as the default protocol handler for
+                    web+cardano links.</p>
+                <p>Example URL: <code class="example-url">web+cardano://send?amount=10&address=addr1...</code></p>
+            </div>
+
+            <p><strong>What this means:</strong></p>
+            <ul style="text-align: left; margin-left: 20px;">
+                <li>When you click a web+cardano link, this extension will handle it</li>
+                <li>You'll see a secure interface to approve or deny transactions</li>
+                <li>Your wallet information stays safe and private</li>
+                <li>You can revoke this permission at any time</li>
+            </ul>
+        </div>
+
+        <div class="buttons">
+            <button class="register"
+                    id="register-btn">Register Protocol Handler</button>
+            <button class="skip"
+                    id="skip-btn">Skip for Now</button>
+        </div>
+
+        <div class="status"
+             id="status"></div>
+    </div>
+
+    <script src="protocol_setup.js"></script>
+</body>
+
+</html>

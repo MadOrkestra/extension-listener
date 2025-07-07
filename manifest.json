@@ -1,11 +1,45 @@
 {
   "manifest_version": 3,
-  "name": "Trigger Example",
+  "name": "Cardano URL Handler",
   "version": "1.0",
-  "description": "Triggers when a specific URL is visited",
-  "permissions": ["webNavigation", "scripting"],
-  "host_permissions": ["http://localhost:5173/*"],
+  "description": "Handles web+cardano URLs and localhost triggers",
+  "permissions": [
+    "webNavigation",
+    "scripting",
+    "tabs",
+    "activeTab",
+    "notifications",
+    "storage"
+  ],
+  "host_permissions": ["http://localhost:5173/*", "https://*/*", "http://*/*"],
   "background": {
     "service_worker": "background.js"
-  }
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Cardano URL Handler"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*/*", "http://*/*"],
+      "js": ["cardano_handler.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "externally_connectable": {
+    "matches": ["https://*/*", "http://*/*"]
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "main_window.html",
+        "main_window.js",
+        "protocol_setup.html",
+        "protocol_setup.js",
+        "popup.html",
+        "popup.js"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }
